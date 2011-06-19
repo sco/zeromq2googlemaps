@@ -1,6 +1,6 @@
 var http        = require('http'),
     fs          = require('fs'),
-    //zeromq      = require('zeromq'),
+    zeromq      = require('zeromq'),
     querystring = require('querystring'),
     pusher      = require('./pusher');
 
