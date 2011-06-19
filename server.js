@@ -15,7 +15,7 @@ var pusherConfig = {
   secret: 'a5812e6ebc7de67b16af'
 };
 
-register callback for when a zeromq message is received
+// register callback for when a zeromq message is received
 subscriber.on('message', function(data) {
 	// parse the message
 	var message = querystring.parse(data.toString());
