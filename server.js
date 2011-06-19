@@ -34,12 +34,15 @@
 // 
 // // connect to the remote pub socket
 // subscriber.connect("tcp://66.206.206.12:61991")
-// 
-// // create an http server for the HTML file
-// http.createServer(function (req, res) {
-// 	fs.readFile("./index.html", "binary", function(err, file) {
-// 		res.writeHead(200, {"Content-Type": "text/html"})
-// 		res.write(file, "binary");
-// 		res.end();
-// 	});
-// }).listen(process.env.PORT || 8001);
+
+var http        = require('http'),
+    fs          = require('fs');
+
+// create an http server for the HTML file
+http.createServer(function (req, res) {
+	fs.readFile("./index.html", "binary", function(err, file) {
+		res.writeHead(200, {"Content-Type": "text/html"})
+		res.write(file, "binary");
+		res.end();
+	});
+}).listen(process.env.PORT || 8001);
