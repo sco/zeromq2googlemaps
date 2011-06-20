@@ -2,26 +2,28 @@ var http        = require('http'),
     fs          = require('fs'),
     zeromq      = require('zeromq'),
     querystring = require('querystring'),
-    pusher      = require('./pusher');
+    io          = require('socket.io');
 
-// create a zeromq 'sub' socket and subscribe to all messages
+// create an HTTP server for the HTML file and socket.io
+var server = http.createServer(function (req, res) {
+	fs.readFile("./index.html", "binary", function(err, file) {
+		res.writeHead(200, {"Content-Type": "text/html"})
+		res.write(file, "binary");
+		res.end();
+	});
+});
+server.listen(process.env.PORT || 8001);
+var socket = io.listen(server); 
+
+// create a zeromq SUB socket and subscribe to all messages
 var subscriber = zeromq.createSocket('sub')
 subscriber.subscribe('')
 
-// configuration from pusher.com
-var pusherConfig = {
-  appId:  '173',
-  key:    '09b153199c3ffc4e1e41',
-  secret: 'a5812e6ebc7de67b16af'
-};
-
 // register callback for when a zeromq message is received
 subscriber.on('message', function(data) {
-	// parse the message
+	// parse the message, reformat it a bit, and send it to connected clients
 	var message = querystring.parse(data.toString());
-
-	// clean it up a bit and send it to pusher
-	pusher.trigger(pusherConfig, "test_channel", "my_event", {
+	socket.broadcast({
 		lat:       parseFloat(message.lat),
 		lng:       parseFloat(message.lon),
 		yield:     parseFloat(message.yield),
@@ -32,14 +34,5 @@ subscriber.on('message', function(data) {
 	});
 })
 
-// connect to the remote pub socket
+// connect to the remote 0MQ PUB socket
 subscriber.connect("tcp://66.206.206.12:61991")
-
-// create an http server for the HTML file
-http.createServer(function (req, res) {
-	fs.readFile("./index.html", "binary", function(err, file) {
-		res.writeHead(200, {"Content-Type": "text/html"})
-		res.write(file, "binary");
-		res.end();
-	});
-}).listen(process.env.PORT || 8001);

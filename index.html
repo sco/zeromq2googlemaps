@@ -12,9 +12,9 @@
 <body> 
 	<div id="map"></div> 
 
-	<!-- include the Google Maps and Pusher libraries -->
+	<!-- include the Google Maps and socket.io libraries -->
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script> 
-	<script type="text/javascript" src="http://js.pusherapp.com/1.8/pusher.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script> 
 
 	<script type="text/javascript"> 
 		// create a standard google map
@@ -24,13 +24,9 @@
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		});
 		
-		// create a pusher.com client
-		var pusher  = new Pusher('09b153199c3ffc4e1e41');
-		var channel = pusher.subscribe('test_channel');
-		var lastInfoWindow;
-		
-		// register a callback for pusher messages
-		channel.bind('my_event', function(message) {
+		// register a callback for incoming messages
+		var socket = new io.Socket();
+		socket.on('message', function(message) {
 			// log the message for debugging
 			console.log(message);
 			
@@ -56,11 +52,8 @@
 			setTimeout(function(){
 				infoWindow.close();
 			}, 1000*4);
-
-			setTimeout(function(){
-				
-			}, 1000*60);
 		});
+		socket.connect();
 	</script>
 </body> 
 
