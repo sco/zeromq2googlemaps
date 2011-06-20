@@ -13,7 +13,9 @@ var server = http.createServer(function (req, res) {
 	});
 });
 server.listen(process.env.PORT || 8001);
-var socket = io.listen(server); 
+
+// create a socket.io instance
+var publisher = io.listen(server); 
 
 // create a zeromq SUB socket and subscribe to all messages
 var subscriber = zeromq.createSocket('sub')
@@ -23,7 +25,7 @@ subscriber.subscribe('')
 subscriber.on('message', function(data) {
 	// parse the message, reformat it a bit, and send it to connected clients
 	var message = querystring.parse(data.toString());
-	socket.broadcast({
+	publisher.broadcast({
 		lat:       parseFloat(message.lat),
 		lng:       parseFloat(message.lon),
 		yield:     parseFloat(message.yield),
@@ -34,5 +36,5 @@ subscriber.on('message', function(data) {
 	});
 })
 
-// connect to the remote 0MQ PUB socket
+// connect to the remote zeromq PUB socket
 subscriber.connect("tcp://66.206.206.12:61991")
