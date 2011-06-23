@@ -38,11 +38,12 @@
 			});
 			
 			// create an info window for the marker
+			var date = new Date(Date.parse(message.time));
 			var infoWindow = new google.maps.InfoWindow({
 				content:
 				  'Combine ' + message.combineId + '<br/>' +
 				  'Yield: '  + message.yield + '<br/>' +
-				  'Time: '   + Date.parse(message.time).toTimeString() + '<br/>' +
+				  'Time: '   + date.toTimeString() + '<br/>' +
 				  'State: '  + message.state + '<br/>' +
 				  'County: ' + message.county
 			});
