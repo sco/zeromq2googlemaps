@@ -33,7 +33,7 @@
 			// create a map marker for the message
 			var marker = new google.maps.Marker({
 				map:      map,
-				position: new google.maps.LatLng(message.lat, message.lng),
+				position: new google.maps.LatLng(message.lat, message.lon),
 				title:    'Combine ' + message.combineId
 			});
 			
@@ -42,7 +42,7 @@
 				content:
 				  'Combine ' + message.combineId + '<br/>' +
 				  'Yield: '  + message.yield + '<br/>' +
-				  'Time: '   + new Date(message.timestamp).toTimeString() + '<br/>' +
+				  'Time: '   + Date.parse(message.time).toTimeString() + '<br/>' +
 				  'State: '  + message.state + '<br/>' +
 				  'County: ' + message.county
 			});

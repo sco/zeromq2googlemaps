@@ -27,27 +27,20 @@ var publisher = io.listen(server);
 
 // create a zeromq SUB socket and subscribe to all messages
 var subscriber = zeromq.createSocket('sub')
-subscriber.subscribe('')
+subscriber.subscribe('{"format": "json"}')
 
 // register callback for when a zeromq message is received
 subscriber.on('message', function(data) {
 	// parse the message, reformat it a bit, and send it to connected clients
-	var message = querystring.parse(data.toString());
+	var str = data.toString().replace('{"format": "json"}','');
+	var message = JSON.parse(str);
 	
-	// reformat the message
-	var newMessage = {
-		lat:       parseFloat(message.lat),
-		lng:       parseFloat(message.lon),
-		yield:     parseFloat(message.yield),
-		combineId: message['combine-id'],
-		timestamp: Date.parse(message.time),
-		state:     message.state,
-		county:    message.county
-	};
-
+	// log the message for debugging
+	console.log(message);
+	
 	// send it out via socket.io and pusher
-	publisher.broadcast(newMessage);
-	pusher.trigger(pusherConfig, "test_channel", "my_event", newMessage);
+	publisher.broadcast(message);
+	pusher.trigger(pusherConfig, "test_channel", "my_event", message);
 })
 
 // connect to the remote zeromq PUB socket
